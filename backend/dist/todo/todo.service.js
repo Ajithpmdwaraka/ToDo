@@ -23,7 +23,12 @@ let TodoService = class TodoService {
         this.todoModel = todoModel;
     }
     async findAll() {
-        return this.todoModel.find().sort({ createdAt: -1 }).exec();
+        try {
+            return await this.todoModel.find().sort({ createdAt: -1 }).exec();
+        }
+        catch (error) {
+            throw new Error('Failed to fetch todos');
+        }
     }
     async findOne(id) {
         if (!mongoose_2.Types.ObjectId.isValid(id)) {
@@ -36,8 +41,13 @@ let TodoService = class TodoService {
         return todo;
     }
     async create(createTodoDto) {
-        const newTodo = new this.todoModel(createTodoDto);
-        return newTodo.save();
+        try {
+            const newTodo = new this.todoModel(createTodoDto);
+            return await newTodo.save();
+        }
+        catch (error) {
+            throw new Error('Failed to create todo');
+        }
     }
     async update(id, updateTodoDto) {
         if (!mongoose_2.Types.ObjectId.isValid(id)) {

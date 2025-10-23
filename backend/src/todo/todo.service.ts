@@ -11,7 +11,11 @@ export class TodoService {
   ) {}
 
   async findAll(): Promise<Todo[]> {
-    return this.todoModel.find().sort({ createdAt: -1 }).exec();
+    try {
+      return await this.todoModel.find().sort({ createdAt: -1 }).exec();
+    } catch (error) {
+      throw new Error('Failed to fetch todos');
+    }
   }
 
   async findOne(id: string): Promise<Todo> {
@@ -26,8 +30,12 @@ export class TodoService {
   }
 
   async create(createTodoDto: CreateTodoDto): Promise<Todo> {
-    const newTodo = new this.todoModel(createTodoDto);
-    return newTodo.save();
+    try {
+      const newTodo = new this.todoModel(createTodoDto);
+      return await newTodo.save();
+    } catch (error) {
+      throw new Error('Failed to create todo');
+    }
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto): Promise<Todo> {

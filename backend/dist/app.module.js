@@ -22,9 +22,13 @@ exports.AppModule = AppModule = __decorate([
             }),
             mongoose_1.MongooseModule.forRootAsync({
                 imports: [config_1.ConfigModule],
-                useFactory: async (configService) => ({
-                    uri: configService.get('MONGODB_URI') || 'mongodb://localhost:27017/todoapp',
-                }),
+                useFactory: async (configService) => {
+                    const uri = configService.get('MONGODB_URI');
+                    if (!uri) {
+                        throw new Error('MONGODB_URI environment variable is required');
+                    }
+                    return { uri };
+                },
                 inject: [config_1.ConfigService],
             }),
             todo_module_1.TodoModule,

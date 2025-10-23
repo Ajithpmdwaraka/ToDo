@@ -10,9 +10,13 @@ import { TodoModule } from './todo/todo.module';
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI') || 'mongodb://localhost:27017/todoapp',
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const uri = configService.get<string>('MONGODB_URI');
+        if (!uri) {
+          throw new Error('MONGODB_URI environment variable is required');
+        }
+        return { uri };
+      },
       inject: [ConfigService],
     }),
     TodoModule,
